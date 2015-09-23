@@ -106,4 +106,19 @@ enum KEY
 	KEY_UNDEFINED = 999,
 };
 
+enum MOUSE_KEY
+{
+	LEFT = 0,
+	MIDDLE = 1,
+	RIGHT = 2,
+	WHEEL_UP = 3,
+	WHEEL_DOWN = 4
+};
+
+enum MOUSE_STATE
+{
+	PRESSED = 0,
+	RELEASED = 1
+};
+
 #endif

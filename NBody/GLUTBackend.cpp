@@ -95,10 +95,15 @@ void GLUTBackend::PassiveMouseCB(int x, int y)
 }
 
 
-/*void GLUTBackend::MouseCB(int button, int state, int x, int y)
+void GLUTBackend::MouseCB(int button, int state, int x, int y)
+{
+	m_instance->s_pCallbacks->OnMouseKey((MOUSE_KEY)button, (MOUSE_STATE)state, x, y);
+}
+
+void GLUTBackend::MotionCB(int x, int y)
 {
 	m_instance->s_pCallbacks->OnMouseMove(x, y);
-}*/
+}
 
 void GLUTBackend::RenderSceneCB()
 {
@@ -116,15 +121,22 @@ void GLUTBackend::CloseCB()
 	m_instance->s_pCallbacks->OnClose();
 }
 
+void GLUTBackend::WindowsSizeChanged(int width, int height)
+{
+	m_instance->s_pCallbacks->WindowsSizeChanged(width, height);
+}
+
 void GLUTBackend::InitCallbacks()
 {
 	glutDisplayFunc(GLUTBackend::RenderSceneCB);
 	glutIdleFunc(this->IdleCB);
 	glutSpecialFunc(this->SpecialKeyboardCB);
 	glutPassiveMotionFunc(this->PassiveMouseCB);
-	//glutmouse
+	glutMouseFunc(this->MouseCB);
 	glutKeyboardFunc(this->KeyboardCB);
+	glutMotionFunc(this->MotionCB);
 	glutCloseFunc(this->CloseCB);
+	glutReshapeFunc(this->WindowsSizeChanged);
 }
 
 void GLUTBackend::Init(int argc, char** argv)

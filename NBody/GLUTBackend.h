@@ -18,11 +18,13 @@ private:
 	static void IdleCB();
 	static void RenderSceneCB();
 	static void PassiveMouseCB(int x, int y);
+	static void MouseCB(int button, int state, int x, int y);
+	static void MotionCB(int x, int y);
 	static void KeyboardCB(unsigned char Key, int x, int y);
 	static void SpecialKeyboardCB(int Key, int x, int y);
+	static void WindowsSizeChanged(int width, int height);
 	static void GLUTBackend::CloseCB();
 	static KEY GLUTKeyToKey(uint Key);
-	
 
 
 	GLUTBackend()

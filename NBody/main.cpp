@@ -34,9 +34,18 @@ private:
 	float m_dt = 0;
 
 	float m_scale = 100.0f;
-	Vector2f m_offset = Vector2f(0.0f,0.0f);
+	Vector2f m_offset = Vector2f(0.0f, 0.0f);
 	float m_aspectRatio;
 	bool m_pause = false;
+
+	//for mouse capture
+	bool m_keyLeftPressed = false;
+	int m_mouse_x = 0;
+	int m_mouse_y = 0;
+
+	//win size
+	int m_win_h = 600;
+	int m_win_w = 800;
 
 public:
 	App(IBackend* backend)
@@ -46,8 +55,8 @@ public:
 
 	virtual void OnKeyPressed(KEY key)
 	{
-		float offsetStep = 0.1 * m_scale;
-		const float scaleStep = 0.4;
+		float offsetStep = 0.1f * m_scale;
+		const float scaleStep = 0.4f;
 
 		switch (key)
 		{
@@ -86,9 +95,52 @@ public:
 		}
 	}
 
+
+
 	virtual void OnMouseMove(int x, int y)
 	{
+		if (m_keyLeftPressed)
+		{
+			//Two is a magic! 
+			float wk = 1.0f / m_win_h * m_scale * 2.0f;
+			float hk = 1.0f / m_win_h * m_scale * 2.0f;
+			m_offset.x -= (m_mouse_x - x)*wk;
+			m_offset.y += (m_mouse_y - y)*hk;
+			m_shaderProgram->SetOffset(m_offset);
+			m_mouse_x = x;
+			m_mouse_y = y;
+		}
+	}
 
+	virtual void OnMouseKey(MOUSE_KEY key, MOUSE_STATE state, int x, int y)
+	{
+		float scaleStep = 2.0;
+		switch (key)
+		{
+		case MOUSE_KEY::WHEEL_DOWN:
+			m_scale += scaleStep;
+			m_shaderProgram->SetScale(m_scale);
+			break;
+		case MOUSE_KEY::WHEEL_UP:
+			m_scale -= scaleStep;
+			m_shaderProgram->SetScale(m_scale);
+			break;
+		case MOUSE_KEY::LEFT:
+			m_keyLeftPressed = !state;
+			m_mouse_x = x;
+			m_mouse_y = y;
+			break;
+		}
+
+
+	}
+
+	virtual void WindowsSizeChanged(int width, int height)
+	{
+		m_win_w = width;
+		m_win_h = height;
+		m_aspectRatio = (float)m_win_h / (float)m_win_w;
+		m_shaderProgram->SetAspectRatio(m_aspectRatio);
 	}
 
 	virtual void OnCapturedMouseMove(int dx, int dy)
@@ -134,7 +186,7 @@ public:
 		{
 			m_frame_count++;
 		}
-		
+
 	}
 
 	virtual void OnClose()
@@ -146,9 +198,9 @@ public:
 		GetCLDev();
 
 		m_backend->Init(argc, argv);
-		m_aspectRatio = 600.0f/800.0f;
+		m_aspectRatio = m_win_h / (float)m_win_w;
 
-		if (!m_backend->CreateWin(800, 600, false, "OpenGL test app"))
+		if (!m_backend->CreateWin(m_win_w, m_win_h, false, "OpenGL test app"))
 		{
 			fprintf(stderr, "Faild to create window");
 			return false;
@@ -201,7 +253,7 @@ public:
 
 		m_last_time_dt = 0;
 		m_time_shift = 1;
-		m_dt = 0.00001;
+		m_dt = 0.00001f;
 
 		m_shaderProgram = new CommonShaderProgram("vertexshader.txt", "pixelshader.txt", "geometryshader.txt");
 		m_shaderProgram->Compile();
@@ -272,6 +324,7 @@ public:
 		clErrNoAssert(ret);
 		m_kernelMove = clCreateKernel(program, "move", &ret);
 		clErrNoAssert(ret);
+		return true;
 	}
 
 	void RunKernel()
