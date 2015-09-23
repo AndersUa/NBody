@@ -1,0 +1,20 @@
+#version 330
+
+in vec2 center;
+in vec2 pos;
+in float r;
+
+uniform float AspectRatio;
+
+out vec4 FragColor;
+
+void main()
+{
+	float a = r* AspectRatio;
+	float b = r;
+	float tmp =  pow(pos.x - center.x, 2.0)/pow(a,2.0) + pow(pos.y-center.y,2.0)/pow(b,2.0);
+	/*if(tmp<1.0)
+	{*/
+		FragColor = vec4(0.9,0.7,0.3,1-tmp);
+	//}
+}

@@ -1,0 +1,44 @@
+#version 330
+
+layout(points) in;
+
+layout(triangle_strip, max_vertices=4) out;
+
+in Body
+{
+  vec2 pos;
+  float r;
+} body[];
+
+out vec2 center;
+out float r;
+out vec2 pos;
+uniform float AspectRatio;
+
+void main()
+{
+	float x = body[0].pos.x*AspectRatio;
+	float y = body[0].pos.y;
+	float rx = body[0].r*AspectRatio;
+	float ry = body[0].r;
+
+    gl_Position = vec4(x - rx, y + ry, 0.0f, 1.0f);
+	center = vec2(x,y);
+	r = body[0].r;
+	pos = vec2(x - rx, y + ry);
+    EmitVertex(); 
+
+    gl_Position = vec4(x + rx, y + ry, 0.0f, 1.0f);
+	pos = vec2(x + rx, y + ry);
+    EmitVertex();
+	
+	gl_Position = vec4(x - rx, y - ry, 0.0f, 1.0f);
+	pos = vec2(x - rx, y - ry);
+    EmitVertex();    
+
+	gl_Position = vec4(x + rx, y - ry, 0.0f, 1.0f);
+	pos = vec2(x + rx, y - ry);
+    EmitVertex(); 
+    
+    EndPrimitive();
+}

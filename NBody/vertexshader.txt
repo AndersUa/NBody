@@ -1,0 +1,19 @@
+#version 330
+
+layout (location = 0) in vec2 Position;
+layout (location = 1) in float R;
+
+uniform float Scale;
+uniform vec2 Offset;
+
+out Body
+{
+  vec2 pos;
+  float r;
+} body;
+
+void main()
+{
+	body.pos = (Position+Offset)/Scale;
+	body.r = R/Scale;
+}
